@@ -1,0 +1,17 @@
+[package]
+name = "hello_bevy"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+resolver = "2"
+
+[dependencies]
+# Remember to disable dynamic_linking before release!
+bevy = { version = "0.10.1", features = ["dynamic_linking"] }
+
+[profile.dev]
+opt-level = 1 # Enables some optimizations in debug mode
+
+[profile.dev.package."*"]
+opt-level = 3 # Enables high optimizations for dependencies

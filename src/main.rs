@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 // Physics timestep
 const TIMESTEP: f32 = 1.0 / 60.0;
-const HAND_SPEED: f32 = 100.0;
+const CRITTER_SPEED: f32 = 100.0;
 
 fn main() {
     App::new()
@@ -16,7 +16,7 @@ pub struct HelloPlugin;
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(hello_setup)
-           .add_system(move_hand)
+           .add_system(move_critter)
            .add_system(update_tracker)
            .insert_resource(FixedTime::new_from_secs(TIMESTEP))
            .insert_resource(Tracker { distance: 0.0 });
@@ -25,7 +25,7 @@ impl Plugin for HelloPlugin {
 
 fn hello_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
-    commands.spawn(HandBundle::new(&asset_server));
+    commands.spawn(CritterBundle::new(&asset_server));
 
     let text_style = TextStyle {
         font: asset_server.load("fonts/FiraMono-Medium.ttf"),
@@ -63,16 +63,16 @@ struct Tracker {
 struct Collider;
 
 #[derive(Component)]
-struct Hand;
+struct Critter;
 
 #[derive(Bundle)]
-struct HandBundle {
+struct CritterBundle {
     sprite_bundle: SpriteBundle,
     collider: Collider,
-    hand: Hand,
+    critter: Critter,
 }
 
-impl HandBundle {
+impl CritterBundle {
     fn new(asset_server: &Res<AssetServer>) -> Self {
         Self {
             sprite_bundle: SpriteBundle {
@@ -84,17 +84,17 @@ impl HandBundle {
                 ..default()
             },
             collider: Collider,
-            hand: Hand,
+            critter: Critter,
         }
     }
 }
 
-fn move_hand(
+fn move_critter(
     keyboard_input: Res<Input<KeyCode>>,
     mut tracker: ResMut<Tracker>,
-    mut query: Query<&mut Transform, With<Hand>>,
+    mut query: Query<&mut Transform, With<Critter>>,
 ) {
-    let mut hand_transform = query.single_mut();
+    let mut critter_transform = query.single_mut();
     let mut direction: Vec2 = Vec2::new(0.0, 0.0);
 
     if keyboard_input.pressed(KeyCode::A) {
@@ -117,11 +117,11 @@ fn move_hand(
         direction = direction.normalize();
     }
 
-    let delta = direction * HAND_SPEED * TIMESTEP;
+    let delta = direction * CRITTER_SPEED * TIMESTEP;
 
-    let new_hand_pos = hand_transform.translation + Vec3::new(delta.x, delta.y, 0.0);
+    let new_critter_pos = critter_transform.translation + Vec3::new(delta.x, delta.y, 0.0);
 
-    hand_transform.translation = new_hand_pos;
+    critter_transform.translation = new_critter_pos;
 
     tracker.distance += delta.length();
 }

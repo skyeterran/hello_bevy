@@ -1,13 +1,12 @@
 use bevy::prelude::*;
 
 // Physics timestep
-const TIMESTEP: f32 = 1.0 / 60.0;
-const CRITTER_SPEED: f32 = 100.0;
+const TIMESTEP: f64 = 1.0 / 60.0;
+const CRITTER_SPEED: f64 = 100.0;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(HelloPlugin)
+        .add_plugins((DefaultPlugins, HelloPlugin))
         .run();
 }
 
@@ -15,10 +14,9 @@ pub struct HelloPlugin;
 
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(hello_setup)
-           .add_system(move_critter)
-           .add_system(update_tracker)
-           .insert_resource(FixedTime::new_from_secs(TIMESTEP))
+        app.add_systems(Startup, hello_setup)
+           .add_systems(Update, (move_critter, update_tracker))
+           .insert_resource(Time::from_seconds(TIMESTEP))
            .insert_resource(Tracker { distance: 0.0 });
     }
 }
@@ -44,11 +42,8 @@ fn hello_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         ])
         .with_style(Style {
             position_type: PositionType::Absolute,
-            position: UiRect {
-                top: Val::Px(10.0),
-                left: Val::Px(10.0),
-                ..default()
-            },
+            left: Val::Px(10.0),
+            top: Val::Px(10.0),
             ..default()
         }),
     );
@@ -117,7 +112,7 @@ fn move_critter(
         direction = direction.normalize();
     }
 
-    let delta = direction * CRITTER_SPEED * TIMESTEP;
+    let delta = direction * (CRITTER_SPEED * TIMESTEP) as f32;
 
     let new_critter_pos = critter_transform.translation + Vec3::new(delta.x, delta.y, 0.0);
 

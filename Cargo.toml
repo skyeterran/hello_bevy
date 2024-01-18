@@ -8,7 +8,7 @@ resolver = "2"
 
 [dependencies]
 # Remember to disable dynamic_linking before release!
-bevy = { version = "0.10.1", features = ["dynamic_linking"] }
+bevy = { version = "0.12.1", features = ["dynamic_linking"] }
 
 [profile.dev]
 opt-level = 1 # Enables some optimizations in debug mode

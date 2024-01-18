@@ -2,11 +2,14 @@ use bevy::prelude::*;
 
 // Physics timestep
 const TIMESTEP: f64 = 1.0 / 60.0;
-const CRITTER_SPEED: f64 = 100.0;
+const CRITTER_SPEED: f64 = 250.0;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, HelloPlugin))
+        .add_plugins((
+            DefaultPlugins,
+            HelloPlugin,
+        ))
         .run();
 }
 
